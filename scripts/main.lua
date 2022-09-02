@@ -215,14 +215,18 @@ if type(GlobalEnvironment) == 'table' and type(Universes) == 'table' then
 		["Weight"] = 3214,
 		["FAntiRoll"] = 50,
 	}
-	
+
 	local hasclipboard = type(setclipboard) == 'function'
-	
+
 	pcall(function() GlobalEnvironment.AC6F.GlitchConnection:Disconnect() end)
 	pcall(function() GlobalEnvironment.AC6F.HackConnection:Disconnect() end)
 	--- @type table
 	--- @version 1.0.0
 	local AC6F = {}
+	if GlobalEnvironment.FireServer then
+		hookfunction(Instance.new("RemoteEvent").FireServer, GlobalEnvironment.FireServer)
+	end
+	GlobalEnvironment.FireServer = Instance.new("RemoteEvent").FireServer
 	GlobalEnvironment.AC6F = AC6F
 
 	local function rawgetall(a, t)
@@ -420,6 +424,16 @@ if type(GlobalEnvironment) == 'table' and type(Universes) == 'table' then
 		return Springs
 	end
 
+	local function GetSoundRemote()
+		local Vehicle = GetVehicle()
+		if typeof(Vehicle) == 'Instance' and Vehicle:IsA("Model") then
+			local AC6_FE_Sounds = Vehicle:FindFirstChild("AC6_FE_Sounds")
+			if typeof(AC6_FE_Sounds) == 'Instance' and AC6_FE_Sounds:IsA("RemoteEvent") then
+				return AC6_FE_Sounds
+			end
+		end
+	end
+
 	local MainWindow
 	local GeneralPage
 	local HackConnection
@@ -516,7 +530,7 @@ if type(GlobalEnvironment) == 'table' and type(Universes) == 'table' then
 							end
 						end,
 					})
-					
+
 					Section:Toggle({
 						Name = 'Glitch',
 						Default = false,
@@ -528,7 +542,7 @@ if type(GlobalEnvironment) == 'table' and type(Universes) == 'table' then
 										local x = math.random(-500, 500)
 										local y = math.random(-500, 500)
 										local z = math.random(-500, 500)
-										
+
 										SeatPart.AssemblyLinearVelocity = Vector3.new(x, y, z)
 									end
 								end)
@@ -756,6 +770,14 @@ if type(GlobalEnvironment) == 'table' and type(Universes) == 'table' then
 						end,
 					})
 				end
+				local Section = Page:Section({
+					Name = 'Sound (Novena AC6.81T)',
+					Side = 'right',
+				}) do
+					Section:Label({
+						Name = 'To play a sound, use\nthe developer functions.'
+					})
+				end
 			end
 			GeneralPage = Page
 			local Page = Window:Page({
@@ -795,19 +817,19 @@ if type(GlobalEnvironment) == 'table' and type(Universes) == 'table' then
 				}) do
 					Section:Label({Name = 'Some settings may require\nyou to exit and re-enter\nthe vehicle.\n\nThis is because the vehicle\nstores the values before\nactually using them.'})
 				end
-				
+
 				local Section = Page:Section({
 					Name = 'Contributing',
 				}) do
 					Section:Label({Name = 'Feel free to contribute.' .. (function()
-						if hasclipboard then
-							return 'https://github.com/paygammy/ac6f/'
+						if not hasclipboard then
+							return '\n\nhttps://github.com/paygammy/ac6f/'
 						end
 						return ''
 					end)()})
 					if hasclipboard then
-					Section:Button({Name = 'GitHub Repository [Clipboard]', Callback = function()
-						return setclipboard('https://github.com/paygammy/ac6f/')
+						Section:Button({Name = 'GitHub Repository [Clipboard]', Callback = function()
+							return setclipboard('https://github.com/paygammy/ac6f/')
 						end,})
 					end
 				end
@@ -890,5 +912,32 @@ if type(GlobalEnvironment) == 'table' and type(Universes) == 'table' then
 	--- @return { [string]: any }
 	function AC6F:GetDriveConfiguration()
 		return GetDriveConfiguration()
+	end
+
+	--- Create a new Sound object. If another sound with the same name is found, it is destroyed.
+	--- @type function
+	function AC6F:CreateSound(Name, Parent, SoundId, PlaybackSpeed, Volume, Looped)
+		local RemoteEvent = GetSoundRemote()
+		if typeof(RemoteEvent) == 'Instance' and RemoteEvent:IsA("RemoteEvent") then
+			return RemoteEvent:FireServer("newSound", Name, Parent, SoundId, PlaybackSpeed, Volume, Looped)
+		end
+	end
+
+	--- Play an existing sound.
+	--- @type function
+	function AC6F:PlaySound(Name)
+		local RemoteEvent = GetSoundRemote()
+		if typeof(RemoteEvent) == 'Instance' and RemoteEvent:IsA("RemoteEvent") then
+			return RemoteEvent:FireServer("playSound", Name)
+		end
+	end
+
+	--- Stop an existing sound.
+	--- @type function
+	function AC6F:StopSound(Name)
+		local RemoteEvent = GetSoundRemote()
+		if typeof(RemoteEvent) == 'Instance' and RemoteEvent:IsA("RemoteEvent") then
+			return RemoteEvent:FireServer("stopSound", Name)
+		end
 	end
 end
