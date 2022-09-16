@@ -5,16 +5,9 @@ if type(getgenv) ~= 'function' then
 end
 
 local GlobalEnvironment = getgenv()
-local Universes = select(2, pcall(function()
-	return game:GetService("HttpService"):JSONDecode(game:HttpGet("https://api.roblox.com/universes/get-universe-containing-place?placeid=" .. game.PlaceId))
-end))
 
-if type(GlobalEnvironment) == 'table' and type(Universes) == 'table' then
+if type(GlobalEnvironment) == 'table' then
 	local LocalPlayer = game:GetService("Players").LocalPlayer
-	local PlaceId = game.PlaceId
-	local UniverseId = Universes.UniverseId
-	local Information = { Name = 'AC6F', Author = 'Pagammy', Version = '1.0.0' }
-
 	local InternalSettings = { 
 		UseVariablesAlways = false, -- coding preference for serialization xd
 		Development = false, 
@@ -435,7 +428,6 @@ if type(GlobalEnvironment) == 'table' and type(Universes) == 'table' then
 	end
 
 	local MainWindow
-	local GeneralPage
 	local HackConnection
 
 	if InternalSettings.LoadUI then
@@ -779,7 +771,6 @@ if type(GlobalEnvironment) == 'table' and type(Universes) == 'table' then
 					})
 				end
 			end
-			GeneralPage = Page
 			local Page = Window:Page({
 				Name = 'Developer',
 			}) do
@@ -872,6 +863,7 @@ if type(GlobalEnvironment) == 'table' and type(Universes) == 'table' then
 				end
 			end
 		end
+		Window.uibind = Enum.KeyCode.RightShift
 		MainWindow = Window
 	end
 
@@ -916,6 +908,7 @@ if type(GlobalEnvironment) == 'table' and type(Universes) == 'table' then
 
 	--- Create a new Sound object. If another sound with the same name is found, it is destroyed.
 	--- @type function
+	--- @return nil
 	function AC6F:CreateSound(Name, Parent, SoundId, PlaybackSpeed, Volume, Looped)
 		local RemoteEvent = GetSoundRemote()
 		if typeof(RemoteEvent) == 'Instance' and RemoteEvent:IsA("RemoteEvent") then
@@ -925,6 +918,7 @@ if type(GlobalEnvironment) == 'table' and type(Universes) == 'table' then
 
 	--- Play an existing sound.
 	--- @type function
+	--- @return nil
 	function AC6F:PlaySound(Name)
 		local RemoteEvent = GetSoundRemote()
 		if typeof(RemoteEvent) == 'Instance' and RemoteEvent:IsA("RemoteEvent") then
@@ -934,6 +928,7 @@ if type(GlobalEnvironment) == 'table' and type(Universes) == 'table' then
 
 	--- Stop an existing sound.
 	--- @type function
+	--- @return nil
 	function AC6F:StopSound(Name)
 		local RemoteEvent = GetSoundRemote()
 		if typeof(RemoteEvent) == 'Instance' and RemoteEvent:IsA("RemoteEvent") then
