@@ -753,8 +753,11 @@ if type(GlobalEnvironment) == 'table' then
 
 					Section:Slider({
 						Name = 'Free Length',
+						
 						Minimum = 0,
 						Maximum = 10,
+						Decimals = .01,
+
 						Callback = function(X)
 							for _, SpringConstraint in pairs(GetSprings()) do
 								SpringConstraint.FreeLength = X
